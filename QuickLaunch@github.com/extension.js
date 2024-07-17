@@ -31,8 +31,8 @@ class PopupGiconMenuItem extends PopupMenu.PopupBaseMenuItem {
         this._icon = new St.Icon({
                 gicon: gIcon,
                 style_class: 'popup-menu-icon' });
-        this.add_actor(this._icon);
-        this.add_actor(this.label);
+        this.add_child(this._icon);
+        this.add_child(this.label);
     }
 });
 
@@ -46,7 +46,7 @@ class QuickLaunch extends PanelMenu.Button {
         super._init( 0.0, IndicatorName );
 
         this._icon = new St.Icon({ icon_name: 'user-bookmarks-symbolic', style_class: 'system-status-icon' });
-        this.add_actor(this._icon);
+        this.add_child(this._icon);
         this.add_style_class_name('panel-status-button');
 
         this.connect('destroy', () => this.onDestroy());
@@ -66,7 +66,7 @@ class QuickLaunch extends PanelMenu.Button {
     _setupDirectory() {
         let dir = Gio.file_new_for_path(AppsPath);
         if (!dir.query_exists(null)) {
-            global.log('create dir ' + AppsPath );
+            console.log('create dir ' + AppsPath );
             dir.make_directory_with_parents(null);
         }
         this._appDirectory = dir;
@@ -114,7 +114,7 @@ class QuickLaunch extends PanelMenu.Button {
     _createDefaultApps(path) {
         let _appsDir = Gio.file_new_for_path(path);
         if (!_appsDir.query_exists(null)) {
-            global.log('App path ' + path + ' could not be opened!');
+            console.log('App path ' + path + ' could not be opened!');
             return;
         }
 
@@ -124,7 +124,7 @@ class QuickLaunch extends PanelMenu.Button {
         try {
             fileEnum = _appsDir.enumerate_children('standard::*', Gio.FileQueryInfoFlags.NONE, null);
         } catch (e) {
-            global.logError('' + e);
+            console.logError('' + e);
             return;
         }
 
@@ -176,13 +176,13 @@ class QuickLaunch extends PanelMenu.Button {
         // from http://www.roojs.com/seed/gir-1.2-gtk-3.0/gjs/
         let appInfo = Gio.DesktopAppInfo.new_from_filename(desktopPath);
         if (!appInfo) {
-            global.log('App for desktop file ' + desktopPath + ' could not be loaded!');
+            console.log('App for desktop file ' + desktopPath + ' could not be loaded!');
             return null;
         }
 
         let menuItem = this._createAppItem(appInfo, function(w, ev) {
             if(!appInfo.launch([], null)) {
-                global.log('Failed to launch ' + appInfo.get_commandline);
+                console.log('Failed to launch ' + appInfo.get_commandline);
             }
         });
 
